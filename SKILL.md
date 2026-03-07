@@ -1,8 +1,24 @@
 ---
 name: remotion-server
-description: Headless video rendering with Remotion. Works on any Linux server - no Mac or GUI needed. Templates for chat demos, promos, and more.
+version: "1.1.0"
+description: Headless video rendering with Remotion v5 on any Linux server — no Mac or GUI needed. Templates for chat demos, promos, and more. Uses Chrome Headless Shell for fast, dependency-free rendering.
+author: mvanhorn
+license: MIT
+repository: https://github.com/mvanhorn/clawdbot-skill-remotion-server
 homepage: https://remotion.dev
-metadata: {"clawdbot":{"emoji":"🎬"}}
+metadata:
+  clawdbot:
+    emoji: "🎬"
+    requires:
+      bins:
+        - node
+        - npm
+    tags:
+      - video
+      - remotion
+      - rendering
+      - react
+      - headless
 ---
 
 # Remotion Server

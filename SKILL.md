@@ -7,7 +7,7 @@ license: MIT
 repository: https://github.com/mvanhorn/clawdbot-skill-remotion-server
 homepage: https://remotion.dev
 metadata:
-  clawdbot:
+  openclaw:
     emoji: "🎬"
     requires:
       bins:

@@ -1,14 +1,20 @@
 # Remotion Server Skill for OpenClaw
 
-Create professional videos from code with [Remotion v5](https://remotion.dev). Headless rendering on any Linux server - no Mac or GUI required.
+Create professional videos from code with [Remotion v4](https://remotion.dev) (latest: v4.0.435). Headless rendering on any Linux server - no Mac or GUI required.
 
 ## What it does
 
+- **5 rendering backends** - local CLI, Lambda, Vercel, Cloud Run, GPU on EC2
 - **Headless rendering** - generate MP4, WebM, GIF, or PNG sequences from code
 - **Social media presets** - TikTok (9:16), YouTube (16:9), Instagram Reel (9:16), Instagram Post (1:1), Twitter (16:9)
 - **Template library** - chat demo, title card, blank starter, plus guidance for building custom templates
+- **New packages** - @remotion/sfx (sound effects), @remotion/starburst (shapes), @remotion/captions, @remotion/player
+- **Mediabunny** - GPU-accelerated format conversion (MP4, WebM, MOV, MKV, AVI, MP3, FLAC, WAV, and more)
 - **Thumbnail generation** - extract any frame as PNG or JPEG using `npx remotion still`
 - **Batch rendering** - render multiple compositions, formats, or prop variations in one pass
+- **TailwindCSS 4.2.0** - pre-configured in all templates
+- **Zod v4** - props validation
+- **Rspack bundler** - experimental faster builds
 - **Any Linux server** - works on VPS, Pi, CI, Docker, wherever Chrome Headless Shell runs
 
 ## Quick start
@@ -48,6 +54,8 @@ npx remotion still MyComp out/thumbnail.png --frame=45
 - "Render a promo video for the product launch"
 - "Generate thumbnails for episodes 1-5"
 - "Batch render this video in all social media formats"
+- "Render this video on Lambda"
+- "Add a ding sound effect at the 2 second mark"
 
 ## Templates
 
@@ -88,9 +96,19 @@ bash scripts/create.sh my-project
 | Instagram Post | 1080x1080 | 1:1 |
 | Twitter/X | 1280x720 | 16:9 |
 
+## Rendering backends
+
+| Backend | Best for | Setup |
+|---------|----------|-------|
+| Local CLI | Dev, CI, single server | None (default) |
+| Lambda | Scale, async, webhooks | AWS account + deploy |
+| Vercel | Teams on Vercel | `npm install @remotion/vercel` |
+| Cloud Run | Longer videos, lower cost | GCP account |
+| GPU (EC2) | Heavy animations, 3D | EC2 GPU instance |
+
 ## How it works
 
-Wraps Remotion's CLI renderer with project scaffolding and templates. The setup script installs Chrome Headless Shell dependencies (libnss3, libatk, libgbm, etc.) so rendering works on headless Linux. All templates use fake demo data only.
+Wraps Remotion v4's CLI renderer with project scaffolding and templates. The setup script installs Chrome Headless Shell dependencies (libnss3, libatk, libgbm, etc.) so rendering works on headless Linux. FFmpeg is baked into each project - no separate install needed. All templates use fake demo data only.
 
 ## License
 

@@ -1,7 +1,7 @@
 ---
 name: remotion-server
-version: "2.0.0"
-description: Create professional videos from code with Remotion v5 - social media format presets, pre-built templates, thumbnail generation, batch rendering. Headless on any Linux server using Chrome Headless Shell. No Mac or GUI needed.
+version: "3.0.0"
+description: Create professional videos from code with Remotion v4 - local CLI, Lambda, Vercel, Cloud Run, GPU rendering. Social media presets, templates, sfx, starburst, captions, Mediabunny. Headless on any Linux server.
 author: mvanhorn
 license: MIT
 repository: https://github.com/mvanhorn/clawdbot-skill-remotion-server
@@ -28,6 +28,11 @@ metadata:
       - batch
       - mp4
       - webm
+      - lambda
+      - vercel
+      - gpu
+      - sfx
+      - captions
     triggers:
       - render a video
       - make a video
@@ -42,12 +47,17 @@ metadata:
       - product demo video
       - generate a thumbnail
       - batch render
+      - render on lambda
+      - render on vercel
+      - add sound effects
+      - add captions
 ---
 
 # Remotion Server
 
-Render videos headlessly on any Linux server using Remotion v5. No Mac or GUI required.
+Render videos headlessly on any Linux server using Remotion v4 (latest: v4.0.435). No Mac or GUI required.
 Chrome Headless Shell handles all rendering - works on VPS, Raspberry Pi, CI runners, Docker containers, anywhere Node.js runs.
+FFmpeg is baked into each Remotion project - no separate FFmpeg install needed.
 
 ## Setup (one-time)
 
@@ -102,6 +112,74 @@ npx remotion preview
 ```
 
 Opens a local dev server where you can scrub through the video timeline, adjust props, and iterate before rendering.
+
+## Rendering Options (5 ways to render)
+
+Remotion v4 offers five rendering backends. Choose based on your infrastructure and scale.
+
+### 1. Local CLI (default)
+
+Render on the machine where Node.js runs. Best for development, CI, and single-server deployments.
+
+```bash
+npx remotion render MyComp out/video.mp4
+```
+
+### 2. Remotion Lambda
+
+Distribute rendering across AWS Lambda functions. Renders up to ~80 minutes of Full HD video. Supports webhooks for async notifications and built-in cost estimation.
+
+```bash
+npm install @remotion/lambda
+
+# Deploy Lambda function
+npx remotion lambda functions deploy
+
+# Render on Lambda
+npx remotion lambda render MyComp
+
+# Estimate cost before rendering
+npx remotion lambda still --estimate-price MyComp
+```
+
+Key features:
+- Distributed rendering across multiple Lambda invocations
+- Webhook callbacks on render completion
+- Cost estimation before rendering
+- S3 output storage
+
+See https://www.remotion.dev/docs/lambda
+
+### 3. @remotion/vercel (NEW - Feb 2026)
+
+Render inside Vercel Sandboxes. Simplest setup - no AWS account needed.
+
+```bash
+npm install @remotion/vercel
+```
+
+Deploy your Remotion project to Vercel and trigger renders via API. Best for teams already on Vercel who want zero-config rendering.
+
+See https://www.remotion.dev/docs/vercel
+
+### 4. Cloud Run (alpha)
+
+Render on Google Cloud Run. Lower compute costs than Lambda for longer videos.
+
+```bash
+npm install @remotion/cloudrun
+npx remotion cloudrun render MyComp
+```
+
+See https://www.remotion.dev/docs/cloudrun
+
+### 5. GPU rendering on EC2 (v4.0.248+)
+
+Hardware-accelerated rendering on EC2 GPU instances. Fastest option for complex compositions with heavy animations or 3D content.
+
+Requires an EC2 instance with a GPU (e.g., g4dn.xlarge) and appropriate drivers.
+
+See https://www.remotion.dev/docs/gpu
 
 ## Social Media Format Presets
 
@@ -173,9 +251,111 @@ When building a Composition in code, set `width`, `height`, and `fps` directly:
 />
 ```
 
+## New Packages (v4.0.429+)
+
+### @remotion/sfx (v4.0.429)
+
+Built-in sound effects for quick audio cues:
+
+```tsx
+import { Sfx } from "@remotion/sfx";
+
+// Available sounds: ding, bruh, vineBoom
+<Sfx name="ding" />
+<Sfx name="bruh" />
+<Sfx name="vineBoom" />
+```
+
+### @remotion/starburst (v4.0.435)
+
+Starburst shape and animation component:
+
+```tsx
+import { Starburst } from "@remotion/starburst";
+
+<Starburst
+  points={12}
+  innerRadius={50}
+  outerRadius={100}
+  fill="yellow"
+/>
+```
+
+### @remotion/shapes (updated v4.0.432)
+
+Geometric shape primitives. Now includes Arrow shape:
+
+```tsx
+import { Triangle, Star, Pie, Arrow } from "@remotion/shapes";
+
+<Triangle length={100} direction="up" fill="red" />
+<Star points={5} innerRadius={30} outerRadius={60} fill="gold" />
+<Pie radius={50} progress={0.75} fill="blue" />
+<Arrow length={150} direction="right" fill="black" />
+```
+
+### @remotion/captions
+
+Animated captions for video content. Supports word-level timing and multiple animation styles:
+
+```tsx
+import { Caption } from "@remotion/captions";
+
+<Caption
+  text="Hello world"
+  startFrame={0}
+  endFrame={60}
+  style="bounce"
+/>
+```
+
+### @remotion/player
+
+Embed Remotion videos in React apps without rendering to file. Interactive playback with controls:
+
+```tsx
+import { Player } from "@remotion/player";
+
+<Player
+  component={MyComp}
+  durationInFrames={300}
+  fps={30}
+  compositionWidth={1920}
+  compositionHeight={1080}
+  controls
+/>
+```
+
+## Mediabunny (format conversion)
+
+Mediabunny is the successor to @remotion/media-parser and @remotion/webcodecs. GPU-accelerated format conversion built into Remotion.
+
+Supported inputs: MP4, WebM, MOV, MKV, M3U8, TS, AVI, MP3, FLAC, WAV, M4A, AAC
+Supported outputs: MP4, WebM, WAV
+
+```tsx
+import { convertMedia } from "@remotion/media-converter";
+
+await convertMedia({
+  src: "input.mov",
+  container: "mp4",
+});
+```
+
+## Remotion Skills (Jan 2026)
+
+AI agent integration for prompt-to-video workflows. Claude Code can generate Remotion compositions from natural language descriptions.
+
+```
+"Create a 15-second TikTok video with animated text saying 'New Feature'
+ that fades in with a spring animation, then show three bullet points"
+```
+
+The agent generates the TSX composition, registers it, and renders it - all from a single prompt.
+
 ## Templates
 
-All templates are created via the `create.sh` script. Each generates a full Remotion project with TypeScript, Tailwind CSS, and the template components.
+All templates are created via the `create.sh` script. Each generates a full Remotion project with TypeScript, TailwindCSS 4.2.0, and the template components.
 
 ### Chat Demo (Telegram-style phone mockup)
 
@@ -420,6 +600,79 @@ npx remotion render MyComp out/video.mp4 --concurrency=4
 npx remotion render MyComp out/video.mp4 --log=verbose
 ```
 
+## Bundler Options
+
+Remotion v4 supports multiple bundlers:
+
+- **Webpack** (default) - stable, well-tested
+- **Rspack** (experimental) - faster builds, drop-in replacement
+
+To use Rspack:
+
+```ts
+// remotion.config.ts
+import { Config } from "@remotion/cli/config";
+Config.setBundler("rspack");
+```
+
+## Studio Visual Mode
+
+Remotion Studio includes a visual editing mode with shared contexts. Preview compositions, adjust props visually, and use the timeline scrubber for frame-accurate editing.
+
+```bash
+npx remotion studio
+```
+
+Features:
+- Visual prop editing
+- Shared contexts between compositions
+- CSS filter support in the web renderer
+- Real-time preview with hot reload
+
+## Styling
+
+### TailwindCSS 4.2.0
+
+Templates ship with TailwindCSS 4.2.0 pre-configured. Use Tailwind classes directly in your compositions:
+
+```tsx
+<AbsoluteFill className="bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center">
+  <h1 className="text-6xl font-bold text-white">Hello World</h1>
+</AbsoluteFill>
+```
+
+### Zod v4 for props validation
+
+Use Zod v4 schemas to validate composition props:
+
+```tsx
+import { z } from "zod";
+
+const schema = z.object({
+  title: z.string(),
+  subtitle: z.string().optional(),
+  color: z.string().default("#ffffff"),
+});
+
+<Composition
+  id="MyComp"
+  component={MyComp}
+  schema={schema}
+  defaultProps={{ title: "Hello" }}
+  ...
+/>
+```
+
+### CSS filters
+
+The web renderer supports CSS filter properties:
+
+```tsx
+<div style={{ filter: "blur(5px) brightness(1.2) saturate(1.5)" }}>
+  <Img src={staticFile("photo.jpg")} />
+</div>
+```
+
 ## Progress Tracking
 
 Remotion prints render progress to stderr during rendering. The output includes:
@@ -629,6 +882,26 @@ bash {baseDir}/scripts/create.sh ig-post
 cd ig-post
 # Build a 1:1 composition
 npx remotion render MyComp out/post.mp4 --width=1080 --height=1080
+```
+
+### Render on Lambda with webhook
+
+```bash
+npx remotion lambda render MyComp \
+  --webhook-url=https://example.com/api/render-complete \
+  --webhook-secret=my-secret
+```
+
+### Add sound effects to a composition
+
+```tsx
+import { Sfx } from "@remotion/sfx";
+import { Sequence } from "remotion";
+
+// Play a ding at frame 30
+<Sequence from={30}>
+  <Sfx name="ding" />
+</Sequence>
 ```
 
 ## Related Skills

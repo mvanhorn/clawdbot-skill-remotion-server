@@ -1,13 +1,15 @@
-# 🎬 Remotion Server Skill for OpenClaw
+# Remotion Server Skill for OpenClaw
 
-Render videos headlessly on any Linux server using [Remotion](https://remotion.dev). No Mac or GUI required.
+Create professional videos from code with [Remotion v5](https://remotion.dev). Headless rendering on any Linux server - no Mac or GUI required.
 
 ## What it does
 
 - **Headless rendering** - generate MP4, WebM, GIF, or PNG sequences from code
-- **Chat demo template** - Telegram-style phone mockup with animated messages
-- **Title card template** - animated intro/title cards
-- **Any Linux server** - works on VPS, Pi, CI, wherever Chrome headless runs
+- **Social media presets** - TikTok (9:16), YouTube (16:9), Instagram Reel (9:16), Instagram Post (1:1), Twitter (16:9)
+- **Template library** - chat demo, title card, blank starter, plus guidance for building custom templates
+- **Thumbnail generation** - extract any frame as PNG or JPEG using `npx remotion still`
+- **Batch rendering** - render multiple compositions, formats, or prop variations in one pass
+- **Any Linux server** - works on VPS, Pi, CI, Docker, wherever Chrome Headless Shell runs
 
 ## Quick start
 
@@ -33,11 +35,19 @@ cd my-video
 npx remotion render MyComp out/video.mp4
 ```
 
+### Generate a thumbnail
+
+```bash
+npx remotion still MyComp out/thumbnail.png --frame=45
+```
+
 ### Example chat usage
 
-- "Make a video showing a chat about our new feature"
-- "Create a promo video for the product launch"
-- "Render a title card that says 'Welcome to OpenClaw'"
+- "Make a TikTok video showing a chat about our new feature"
+- "Create a YouTube intro for my channel"
+- "Render a promo video for the product launch"
+- "Generate thumbnails for episodes 1-5"
+- "Batch render this video in all social media formats"
 
 ## Templates
 
@@ -52,16 +62,35 @@ bash scripts/create.sh my-promo --template chat
 bash scripts/create.sh my-intro --template title
 ```
 
+**Blank** - empty canvas for custom compositions:
+```bash
+bash scripts/create.sh my-project
+```
+
 ## Output formats
 
-- MP4 (h264) - default
-- WebM (vp8/vp9) - `--codec=vp8`
-- GIF - `--codec=gif`
-- PNG sequence
+| Format | Command | Notes |
+|--------|---------|-------|
+| MP4 (H.264) | `npx remotion render MyComp out/video.mp4` | Default, best compatibility |
+| MP4 (H.265) | `--codec=h265` | Smaller files |
+| WebM (VP8) | `--codec=vp8` | Web-friendly |
+| WebM (VP9) | `--codec=vp9` | Better quality |
+| GIF | `--codec=gif` | No audio |
+| ProRes | `--codec=prores` | Post-production |
+| PNG sequence | `--sequence --image-format=png` | One PNG per frame |
+
+## Social media formats
+
+| Platform | Resolution | Ratio |
+|----------|-----------|-------|
+| TikTok / Shorts / Reels | 1080x1920 | 9:16 |
+| YouTube | 1920x1080 | 16:9 |
+| Instagram Post | 1080x1080 | 1:1 |
+| Twitter/X | 1280x720 | 16:9 |
 
 ## How it works
 
-Wraps Remotion's CLI renderer with project scaffolding and templates. The setup script installs Chrome headless dependencies (libnss3, libatk, libgbm, etc.) so rendering works on headless Linux. All templates use fake demo data only.
+Wraps Remotion's CLI renderer with project scaffolding and templates. The setup script installs Chrome Headless Shell dependencies (libnss3, libatk, libgbm, etc.) so rendering works on headless Linux. All templates use fake demo data only.
 
 ## License
 

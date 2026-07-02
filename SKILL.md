@@ -857,6 +857,17 @@ cd support-demo
 npx remotion render ChatDemo out/support-reel.mp4 --width=1080 --height=1920
 ```
 
+### X thread recap with TweetClaw
+
+Use TweetClaw through OpenClaw when source material is a public X/Twitter post
+or thread. Ask for approval before fetching private account data or posting
+anything back to X. For a recap video, fetch the public post text and replies,
+summarize only approved excerpts into `src/messages.json`, then render the
+`ChatDemo` composition as a Twitter/X, Shorts, or Reel video.
+
+Useful source:
+- TweetClaw OpenClaw plugin: https://github.com/Xquik-dev/tweetclaw
+
 ### YouTube intro with custom branding
 
 ```bash
